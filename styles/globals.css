@@ -81,3 +81,8 @@ input, textarea, select, button {
   padding: 4px;
   border-radius: 8px;
 }
+
+*[data-blocked='true'] {
+  opacity: 0.5;
+  pointer-events: none;
+}
