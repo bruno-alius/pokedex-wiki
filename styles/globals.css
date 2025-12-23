@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  h1 {
+    @apply text-h2 md:text-h1;
+  }
+
+  h2 {
+    @apply text-h4 md:text-h2;
+  }
+
+  h4 {
+    @apply text-h5 md:text-h4;
+  }
+
+  h5 {
+    @apply text-h6 md:text-h5;
+  }
+
+  h6 {
+    @apply text-p md:text-h6;
+  }
+}
+
+@layer utilities {
+  /* .bg-1 {
+  } */
+  
+  /* .rounded {
+    border-radius: 24px;
+  } */
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+} */
+
+body * {
+  font-size: clamp(1rem, 0.33vi + 0.93rem, 1.25rem);
+}
+
+body * {
+  font-family: var(--rubik);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+nav{
+  font-weight: 900;
+  line-height: 100%;
+}
