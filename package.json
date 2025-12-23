@@ -7,14 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky",
-    "typegen": "cf-content-types-generator",
-    "codegen": "python .scripts/contentfulGenerator.py"
+    "prepare": "husky"
   },
   "dependencies": {
     "aos": "^2.3.4",
-    "cf-content-types-generator": "^2.16.1",
-    "contentful": "^11.8.9",
     "ldrs": "^1.1.9",
     "next": "^15.5.6",
     "react": "^19.2.0",

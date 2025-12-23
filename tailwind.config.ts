@@ -1,13 +1,11 @@
 import type { Config } from "tailwindcss";
 
 const colorPalette = {
-  'transparent': 'transparent',
-  'main': '#DD0B4C',
-  'accent-1': 'red',
-  'accent-2': 'green',
-  'accent-3': 'blue',
-  'white': '#FFFFFF',
-  'black': '#000000'
+  bg: '#47bbe5ff',
+  card: '#fffff7ff',
+  'card-border': '#e1e0dbff',
+  'option': '#edf1cfff',
+  'option-border': '#b9c19fff',
 };
 
 
@@ -18,15 +16,11 @@ export default {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    colors: {...colorPalette, nav: {
-      default: colorPalette["accent-3"],
-      hover: colorPalette["accent-1"],
-      active: colorPalette["accent-2"],
-    }},
+    colors: {...colorPalette,},
     extend: {
       spacing: {
-        'nav-sm': '77px',
-        'nav-lg': '92px',
+        'nav-sm': '92.4px',
+        'nav-lg': '110.4px',
       },
       fontSize: {
         'h1': '3.0518em',

@@ -22,9 +22,16 @@
   h6 {
     @apply text-p md:text-h6;
   }
+
+  div, p {
+    @apply text-p;
+  }
 }
 
 @layer utilities {
+  .card {
+    @apply p-2 bg-card border-card-border border-2 rounded shadow flex flex-col h-min
+  }
   /* .bg-1 {
   } */
   
@@ -41,11 +48,11 @@
 } */
 
 body * {
-  font-size: clamp(1rem, 0.33vi + 0.93rem, 1.25rem);
+  /* font-size: clamp(1rem, 0.33vi + 0.93rem, 1.25rem); */
 }
 
 body * {
-  font-family: var(--rubik);
+  font-family: var(--handjet), monospace;
 }
 
 h1,
@@ -54,7 +61,23 @@ h3,
 h4,
 h5,
 h6,
-nav{
-  font-weight: 900;
+nav,
+label{
+  font-weight: 800;
   line-height: 100%;
+}
+
+
+div, p {
+  font-weight: 600;
+}
+
+i {
+  font-weight: 400;
+}
+
+input, textarea, select, button {
+  border: 2px solid rgb(119, 120, 116);
+  padding: 4px;
+  border-radius: 8px;
 }
