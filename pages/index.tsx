@@ -71,8 +71,8 @@ export default function Home() {
               />
             </div>
             {pokemon.moves.map((move, moveIndex) => (
-              <div className="flex gap-1 justify-center items-end">
-                <div className="flex flex-col gap-1 flex-1" key={"pokemon" + pokemonIndex + "move" + moveIndex + "-edit"}>
+              <div className="flex gap-1 justify-center items-end" key={"pokemon" + pokemonIndex + "move" + moveIndex + "-edit"}>
+                <div className="flex flex-col gap-1 flex-1" >
                   <label htmlFor="">Movimiento {moveIndex + 1}</label>
                   <input type="text" value={move}
                     onChange={(e) => {
