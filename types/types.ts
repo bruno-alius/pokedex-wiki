@@ -3,4 +3,5 @@ type Pokemon = {
     alias: string
     moves: string[]
     editMode: boolean
+    tags: string
 }
