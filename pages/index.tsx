@@ -62,8 +62,11 @@ export default function Home() {
         ))}
       </div>
       <div className="w-full min-h-[100vh] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 auto-rows-min p-2 gap-2">
-        {pokemons.filter(pokemon => activeTag === "" || pokemon.tags.split(",").map(tag => tag.trim()).includes(activeTag)).map((pokemon, pokemonIndex) => (pokemon.editMode ?
-          <div className="card relative" key={"pokemon" + pokemonIndex + "-edit"}>
+        {pokemons
+        .map((pokemon, index) => ({...pokemon, index}))
+        .filter(pokemon => activeTag === "" || pokemon.tags.split(",").map(tag => tag.trim()).includes(activeTag))
+        .map((pokemon) => (pokemon.editMode ?
+          <div className="card relative" key={"pokemon" + pokemon.index + "-edit"}>
             <div className="gap-3 grid grid-cols-2">
               <div className="flex flex-col gap-1">
                 <label>Pokemon</label>
@@ -72,7 +75,7 @@ export default function Home() {
                   value={pokemon.name}
                   onChange={(e) => {
                     const updatedPokemons = [...pokemons];
-                    updatedPokemons[pokemonIndex].name = e.target.value;
+                    updatedPokemons[pokemon.index].name = e.target.value;
                     setPokemons(updatedPokemons);
                   }}
                 />
@@ -82,19 +85,19 @@ export default function Home() {
                 <input type="text" value={pokemon.alias}
                   onChange={(e) => {
                     const updatedPokemons = [...pokemons];
-                    updatedPokemons[pokemonIndex].alias = e.target.value;
+                    updatedPokemons[pokemon.index].alias = e.target.value;
                     setPokemons(updatedPokemons);
                   }}
                 />
               </div>
               {pokemon.moves.map((move, moveIndex) => (
-                <div className="flex gap-1 justify-center items-end" key={"pokemon" + pokemonIndex + "move" + moveIndex + "-edit"}>
+                <div className="flex gap-1 justify-center items-end" key={"pokemon" + pokemon.index + "move" + moveIndex + "-edit"}>
                   <div className="flex flex-col gap-1 flex-1" >
                     <label htmlFor="">Movimiento {moveIndex + 1}</label>
                     <input type="text" value={move}
                       onChange={(e) => {
                         const updatedPokemons = [...pokemons];
-                        updatedPokemons[pokemonIndex].moves[moveIndex] = e.target.value;
+                        updatedPokemons[pokemon.index].moves[moveIndex] = e.target.value;
                         setPokemons(updatedPokemons);
                       }}
                     />
@@ -102,34 +105,34 @@ export default function Home() {
                   <MdDelete className="transition-all h-[36px] text-[24px] cursor-pointer opacity-70 hover:opacity-100"
                     onClick={() => {
                       const updatedPokemons = [...pokemons];
-                      updatedPokemons[pokemonIndex].moves.splice(moveIndex, 1);
+                      updatedPokemons[pokemon.index].moves.splice(moveIndex, 1);
                       setPokemons(updatedPokemons);
                     }}
                   />
                 </div>
               ))}
-              <button data-blocked={isPokemonMoveEmpty(pokemon)} className="bg-[black] text-[white] h-[56px] flex gap-1 items-center justify-center hover:brightness-150 transition-all" onClick={() => { const updatedPokemons = [...pokemons]; updatedPokemons[pokemonIndex].moves.push(""); setPokemons(updatedPokemons) }}>Añadir movimiento <FaPlus /></button>
+              <button data-blocked={isPokemonMoveEmpty(pokemon)} className="bg-[black] text-[white] h-[56px] flex gap-1 items-center justify-center hover:brightness-150 transition-all" onClick={() => { const updatedPokemons = [...pokemons]; updatedPokemons[pokemon.index].moves.push(""); setPokemons(updatedPokemons) }}>Añadir movimiento <FaPlus /></button>
               <div className="flex flex-col gap-1 col-span-2">
                 <label htmlFor="">Tags</label>
                 <input type="text" value={pokemon.tags}
                   onChange={(e) => {
                     const updatedPokemons = [...pokemons];
-                    updatedPokemons[pokemonIndex].tags = e.target.value;
+                    updatedPokemons[pokemon.index].tags = e.target.value;
                     setPokemons(updatedPokemons);
                   }}
                 />
               </div>
               <div className="col-span-2 grid grid-cols-2 gap-2">
                 <button className="bg-[#701f1f] border-[#cf4a4a] border-2 text-[white] hover:brightness-125 transition-all" onClick={() => { reloadData(); }}>Cancelar cambios</button>
-                <button data-blocked={isPokemonBlocked(pokemon)} className="bg-[#005c39] border-[#4caf50] border-2 text-[white] hover:brightness-125 transition-all" onClick={() => { const updatedPokemons = [...pokemons]; updatedPokemons[pokemonIndex].editMode = false; setPokemons(updatedPokemons); storePokemons(updatedPokemons); reloadData(); }}>Guardar cambios</button>
+                <button data-blocked={isPokemonBlocked(pokemon)} className="bg-[#005c39] border-[#4caf50] border-2 text-[white] hover:brightness-125 transition-all" onClick={() => { const updatedPokemons = [...pokemons]; updatedPokemons[pokemon.index].editMode = false; setPokemons(updatedPokemons); storePokemons(updatedPokemons); reloadData(); }}>Guardar cambios</button>
               </div>
             </div>
           </div>
           :
-          <div key={pokemonIndex} className="card !pl-0 items-center !gap-0 !flex-row">
+          <div key={pokemon.index} className="card !pl-0 items-center !gap-0 !flex-row">
             {/* <div className="absolute top-2 right-2 cursor-pointer" onClick={() => {
               const updatedPokemons = [...pokemons];
-              updatedPokemons[pokemonIndex].editMode = true;
+              updatedPokemons[pokemon.index].editMode = true;
               setPokemons(updatedPokemons);
             }}><RiEdit2Fill className="text-[1.5em]" /></div> */}
             <img className="object-cover h-[80px]" src={`https://img.pokemondb.net/sprites/diamond-pearl/normal/${stringToSlug(pokemon.name)}.png`} alt="" />
@@ -152,7 +155,7 @@ export default function Home() {
               <div className="flex w-full items-center gap-2 justify-between pt-4">
                 <MdDelete className=" cursor-pointer opacity-70 hover:opacity-100 transition-all" onClick={() => {
                   const updatedPokemons = [...pokemons];
-                  updatedPokemons.splice(pokemonIndex, 1);
+                  updatedPokemons.splice(pokemon.index, 1);
                   setPokemons(updatedPokemons);
                   storePokemons(updatedPokemons);
                   reloadData();
@@ -161,7 +164,7 @@ export default function Home() {
                   className="cursor-pointer opacity-70 hover:opacity-100 transition-all"
                   onClick={() => {
                     const updatedPokemons = [...pokemons];
-                    updatedPokemons[pokemonIndex].editMode = true;
+                    updatedPokemons[pokemon.index].editMode = true;
                     setPokemons(updatedPokemons);
                   }} />
               </div>
