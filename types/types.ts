@@ -5,3 +5,8 @@ type Pokemon = {
     editMode: boolean
     tags: string
 }
+
+type Item = {
+    name: string
+    editMode: boolean
+}
