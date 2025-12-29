@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { FaLink } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
 import { MdDelete } from "react-icons/md";
-import { RiEdit2Fill } from "react-icons/ri";
 
 export default function Items() {
     const [items, setItems] = useState<Item[]>([]);
@@ -59,7 +58,7 @@ export default function Items() {
                                     <div className="flex gap-2 items-center">
                                         <h5>{item.name}</h5>
                                         <FaLink className="" />
-                                                                        
+
                                     </div>
                                 </Link>
                                 <MdDelete className=" cursor-pointer opacity-70 hover:opacity-100 transition-all" onClick={() => {
