@@ -5,6 +5,7 @@ type Pokemon = {
     moveImgs: string[]
     editMode: boolean
     tags: string
+    typeImgs: string[]
 }
 
 type Item = {

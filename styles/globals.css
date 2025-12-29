@@ -29,9 +29,13 @@
 }
 
 @layer utilities {
+    .shadow {
+    filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.1));
+  }
   .card {
     @apply p-2 bg-card border-card-border border-2 rounded shadow flex flex-col h-min
   }
+
   /* .bg-1 {
   } */
   
@@ -63,7 +67,7 @@ h5,
 h6,
 nav,
 label{
-  font-weight: 800;
+  font-weight: 900;
   line-height: 100%;
 }
 
@@ -80,6 +84,7 @@ input, textarea, select, button {
   border: 2px solid rgb(119, 120, 116);
   padding: 4px;
   border-radius: 8px;
+     filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.1));
 }
 
 *[data-blocked='true'] {

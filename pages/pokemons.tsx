@@ -1,4 +1,4 @@
-import { getMoveTypeImgFromMoveName } from "@/utils/Pokeapi";
+import { getMoveTypeImgFromMoveName, getPokemonTypesImgFromPokemonName } from "@/utils/Pokeapi";
 import { stringToSlug } from "@/utils/Utils";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -32,30 +32,48 @@ export default function Pokemons() {
       if (!pokemon.moveImgs) {
         pokemon.moveImgs = [];
       }
+
+      if (!pokemon.typeImgs) {
+        pokemon.typeImgs = [];
+      }
       return pokemon;
     });
   };
 
   const setAsyncData = async (data: Pokemon[]) => {
-    if (data.every(pokemon => pokemon.moveImgs && pokemon.moveImgs.length === pokemon.moves.length && pokemon.moveImgs.every((img: string) => img !== ""))) {
-      return;
+    if (!(data.every(pokemon => pokemon.moveImgs && pokemon.moveImgs.length === pokemon.moves.length && pokemon.moveImgs.every((img: string) => img !== "")))) {
+      const updatedData = await Promise.all(data.map(async (pokemon) => {
+        const moveImgs: string[] = [];
+        for (const move of pokemon.moves) {
+          try {
+            const moveImg = await getMoveTypeImgFromMoveName(stringToSlug(move));
+            moveImgs.push(moveImg);
+          } catch (error) {
+            moveImgs.push("");
+          }
+        }
+        return { ...pokemon, moveImgs };
+      }));
+      setPokemons(updatedData);
+      storePokemons(updatedData);
     }
 
-    const updatedData = await Promise.all(data.map(async (pokemon) => {
-      const moveImgs: string[] = [];
-      for (const move of pokemon.moves) {
+    if (!(data.every(pokemon => pokemon.typeImgs && pokemon.typeImgs.length > 0 && pokemon.typeImgs.every((img: string) => img !== "")))) {
+      const updatedPokemonTypeData = await Promise.all(data.map(async (pokemon) => {
+        let typeImgs: string[] = [];
+
         try {
-          const moveImg = await getMoveTypeImgFromMoveName(stringToSlug(move));
-          moveImgs.push(moveImg);
+          typeImgs = await getPokemonTypesImgFromPokemonName(stringToSlug(pokemon.name));
         } catch (error) {
-          moveImgs.push("");
         }
-      }
-      return { ...pokemon, moveImgs };
-    }));
-    setPokemons(updatedData);
-    storePokemons(updatedData);
-  }
+
+        return { ...pokemon, typeImgs };
+      }));
+
+      setPokemons(updatedPokemonTypeData);
+      storePokemons(updatedPokemonTypeData);
+    }
+  };
 
   const reloadData = () => {
     if (typeof window !== 'undefined') {
@@ -85,7 +103,7 @@ export default function Pokemons() {
     <div className="flex flex-col bg-bg top-0 ">
       <div className="flex gap-2 p-2 gap-2">
         {([""].concat(tags)).map((tag, tagIndex) => (
-          <div key={"tag-filter-" + tagIndex} className={`px-2 py-1 rounded cursor-pointer hover:brightness-125 border-2 transition-all ${activeTag === tag ? "bg-[black] text-[white] border-[darkgray]" : "bg-option border-option-border"}`} onClick={() => {
+          <div key={"tag-filter-" + tagIndex} className={`shadow px-2 py-1 rounded cursor-pointer hover:brightness-125 border-2 transition-all ${activeTag === tag ? "bg-[black] text-[white] border-[darkgray]" : "bg-option border-option-border"}`} onClick={() => {
             setActiveTag(tag);
             reloadData();
           }}>{tag || "Todos"}</div>
@@ -96,7 +114,7 @@ export default function Pokemons() {
           .map((pokemon, index) => ({ ...pokemon, index }))
           .filter(pokemon => activeTag === "" || pokemon.tags.split(",").map(tag => tag.trim()).includes(activeTag))
           .map((pokemon) => (pokemon.editMode ?
-            <div className="card relative" key={"pokemon" + pokemon.index + "-edit"}>
+            <div className="shadow card relative" key={"pokemon" + pokemon.index + "-edit"}>
               <div className="gap-3 grid grid-cols-2">
                 <div className="flex flex-col gap-1">
                   <label>Pokemon</label>
@@ -160,26 +178,31 @@ export default function Pokemons() {
               </div>
             </div>
             :
-            <div key={pokemon.index} className="card !pl-0 items-center !gap-0 !flex-row">
+            <div key={pokemon.index} className="shadow card !pl-0 items-center !gap-0 !flex-row">
               {/* <div className="absolute top-2 right-2 cursor-pointer" onClick={() => {
               const updatedPokemons = [...pokemons];
               updatedPokemons[pokemon.index].editMode = true;
               setPokemons(updatedPokemons);
             }}><RiEdit2Fill className="text-[1.5em]" /></div> */}
-              <img className="object-cover h-[80px]" src={`https://img.pokemondb.net/sprites/diamond-pearl/normal/${stringToSlug(pokemon.name)}.png`} alt="" />
+              <img className="object-cover h-[80px] mr-1 px-1" src={`https://img.pokemondb.net/sprites/diamond-pearl/normal/${stringToSlug(pokemon.name)}.png`} alt="" />
               <div className="flex flex-col w-full min-h-[80px] h-full justify-between">
                 <div className="flex justify-center w-full gap-2">
-                  <Link href={`https://pokemondb.net/pokedex/${stringToSlug(pokemon.name)}`} target="_blank" key={pokemon.name}>
-                    <div className="mb-2 flex gap-2 items-center">
-                      <h5>{pokemon.alias} ({pokemon.name})</h5>
-                      <FaLink className="" />
+                  <Link className="w-full" href={`https://pokemondb.net/pokedex/${stringToSlug(pokemon.name)}`} target="_blank" key={pokemon.name}>
+                    <div className="mb-3 flex items-center justify-between w-full">
+                      <div className="flex gap-2 items-center">
+                        <h5>{pokemon.alias} <span className="text-[0.9em]" style={{ fontWeight: 700 }}>({pokemon.name})</span></h5>
+                        <FaLink className="text-[0.75em]" />
+                      </div>
+                      <div className="flex gap-2 items-center">
+                        {pokemon.typeImgs?.map((typeImg, typeImgIndex) => (<div key={typeImgIndex}><img className="shadow" src={typeImg} alt="" /></div>))}
+                      </div>
                     </div>
                   </Link>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {pokemon.moves.map((move, moveIndex) => (
                     <Link href={`https://pokemondb.net/move/${stringToSlug(move)}`} target="_blank" key={move}>
-                      <div className="transition-all cursor-pointer hover:brightness-110 bg-option border-option-border border-2 flex gap-2 justify-between items-center rounded p-1 px-2" key={move}><img src={(pokemon.moveImgs.length > 0 && pokemon.moveImgs[moveIndex]) || ""} alt="" /><p className="w-full">{move}</p><FaLink className="text-[0.8em]" /></div>
+                      <div className="shadow transition-all cursor-pointer hover:brightness-110 bg-option border-option-border border-2 flex gap-2 justify-between items-center rounded p-1 px-2" key={move}><img src={(pokemon.moveImgs.length > 0 && pokemon.moveImgs[moveIndex]) || ""} alt="" /><p className="w-full">{move}</p><FaLink className="text-[0.8em]" /></div>
                     </Link>
                   ))}
                 </div>
@@ -202,8 +225,9 @@ export default function Pokemons() {
               </div>
             </div>
           ))}
-        <div className="card flex !flex-row gap-1 items-center justify-center cursor-pointer hover:brightness-50 transition-all" onClick={() => setPokemons(pokemons.concat({ name: "", alias: "", moves: [], moveImgs: [], tags: activeTag, editMode: true }))}><p>Añadir pokemon</p><FaPlus /></div>
+        <div className="card flex !flex-row gap-1 items-center justify-center cursor-pointer hover:brightness-50 transition-all" onClick={() => setPokemons(pokemons.concat({ name: "", alias: "", moves: [], moveImgs: [], typeImgs: [], tags: activeTag, editMode: true }))}><p>Añadir pokemon</p><FaPlus /></div>
       </div>
     </div>
   );
 }
+
